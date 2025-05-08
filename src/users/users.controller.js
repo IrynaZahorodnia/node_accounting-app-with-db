@@ -38,8 +38,13 @@ const deleteOne = async (req, res) => {
     return res.sendStatus(404);
   }
 
-  await usersService.deleteById(id);
-  res.sendStatus(204);
+  const deletedNumber = await usersService.deleteById(id);
+
+  if (deletedNumber) {
+    res.sendStatus(204);
+  } else {
+    res.sendStatus(404);
+  }
 };
 
 const update = async (req, res) => {
@@ -50,13 +55,15 @@ const update = async (req, res) => {
     return res.sendStatus(400);
   }
 
-  const updatedUser = await usersService.update({ id, name });
+  const updatedResult = await usersService.update({ id, name });
 
-  if (!updatedUser[0]) {
+  if (!updatedResult) {
     return res.sendStatus(404);
   }
 
-  res.json(updatedUser[1][0]);
+  const updatedUser = await usersService.getById(id);
+
+  res.json(updatedUser);
 };
 
 module.exports = {

@@ -13,29 +13,30 @@ function create(name) {
 }
 
 function deleteById(id) {
-  User.destroy({
+  return User.destroy({
     where: {
       id,
     },
   });
 }
 
-function update({ id, name }) {
-  const userToUpdate = getById(id);
+async function update({ id, name }) {
+  const userToUpdate = await getById(id);
 
   if (!userToUpdate) {
     return;
   }
 
-  return User.update(
+  const updatedNumber = await User.update(
     { name },
     {
       where: {
         id,
       },
-      returning: true,
     },
   );
+
+  return updatedNumber[0];
 }
 
 module.exports = {

@@ -27,9 +27,13 @@ async function deleteOne(req, res) {
     return res.sendStatus(404);
   }
 
-  await expensesService.deleteById(id);
+  const deletedNumber = await expensesService.deleteById(id);
 
-  res.sendStatus(204);
+  if (deletedNumber) {
+    res.sendStatus(204);
+  } else {
+    res.sendStatus(404);
+  }
 }
 
 async function create(req, res) {
@@ -65,13 +69,15 @@ async function update(req, res) {
     return res.sendStatus(404);
   }
 
-  const updatedExpense = await expensesService.update(id, req.body);
+  const updatedNumber = await expensesService.update(id, req.body);
 
-  if (!updatedExpense[0]) {
+  if (!updatedNumber) {
     return res.sendStatus(404);
   }
 
-  res.json(updatedExpense[1][0]);
+  const updatedExpense = await expensesService.getById(id);
+
+  res.json(updatedExpense);
 }
 
 module.exports = {

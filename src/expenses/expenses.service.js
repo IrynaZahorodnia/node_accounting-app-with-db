@@ -38,12 +38,14 @@ function getById(id) {
   return Expense.findByPk(id);
 }
 
-function deleteById(id) {
-  Expense.destroy({
+async function deleteById(id) {
+  const deleted = await Expense.destroy({
     where: {
       id,
     },
   });
+
+  return deleted;
 }
 
 function create({ userId, spentAt, title, amount, category, note }) {
@@ -57,16 +59,23 @@ function create({ userId, spentAt, title, amount, category, note }) {
   });
 }
 
-function update(id, newValues) {
-  return Expense.update(
+async function update(id, newValues) {
+  const expenseToUpdate = await getById(id);
+
+  if (!expenseToUpdate) {
+    return;
+  }
+
+  const updatedNumber = await Expense.update(
     { ...newValues },
     {
       where: {
         id,
       },
-      returning: true,
     },
   );
+
+  return updatedNumber[0];
 }
 
 module.exports = {
